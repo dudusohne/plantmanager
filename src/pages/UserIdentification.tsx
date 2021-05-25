@@ -12,7 +12,7 @@ import {
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 import { Button } from '../components/Button';
-import { setStatusBarNetworkActivityIndicatorVisible } from 'expo-status-bar';
+import { useNavigation } from '@react-navigation/core';
 
 export function UserIdentification() {
    
@@ -31,7 +31,12 @@ export function UserIdentification() {
        setIsFilled(!!value);
        setName(value);
    }
-   
+   const navigation = useNavigation()
+
+    function handleSubmit(){
+        navigation.navigate('Confirmation')
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView 
@@ -42,7 +47,7 @@ export function UserIdentification() {
                 <View style={styles.form}>
                     <View style={styles.header}>
                     <Text style={styles.emoji}>
-                        😊
+                        { isFilled ? '😂' : '😊'}
                     </Text>
                     <Text
                         style={styles.text}
@@ -60,10 +65,14 @@ export function UserIdentification() {
                         onBlur={handleInputBlur}
                         onFocus={handleInputFocus}
                         onChangeText={handleInputChange}
+                        
                     />  
                     </View>
                     <View style={styles.footer}>
-                    <Button />
+                    <Button 
+                     title="Confirmar"
+                     onPress={handleSubmit}
+                     />
                     </View>
                 </View>
             </View>
