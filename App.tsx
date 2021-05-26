@@ -20,7 +20,7 @@ export default function App() {
   return <AppLoading />
  
   return (
-    <Routes  />
+    <Routes />
   )
 }
 
