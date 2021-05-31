@@ -5,9 +5,7 @@ import {
     View,
     StyleSheet,
     FlatList,
-    ActivityIndicator,
-    ActivityIndicatorBase
-
+    ActivityIndicator
 } from 'react-native';
 import { EnviromentButton } from '../components/EnviromentButton';
 import { Header } from '../components/Header';
@@ -129,8 +127,9 @@ export function PlantSelect() {
 
             <View>
 
-                <FlatList
+                <FlatList   
                     data={enviroments}
+                    keyExtractor={(item) => String(item.key)}
                     renderItem={({ item }) => (
                         <EnviromentButton
                             title={item.title}
@@ -148,6 +147,7 @@ export function PlantSelect() {
             <View style={styles.plants}>
                 <FlatList
                     data={filteredPlants}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
                         <PlantCardPrimary data={item} />
                     )}
@@ -164,8 +164,6 @@ export function PlantSelect() {
                     }
                 />
             </View>
-
-
         </View>
     )
 }

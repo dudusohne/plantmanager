@@ -5,14 +5,20 @@ import {
     View,
     Text,
     TextInput,
-    TouchableOpacity,
     KeyboardAvoidingView,
-    Platform
+    Platform,
+    Keyboard,
+    Alert
 } from 'react-native';
+
+import { useNavigation } from '@react-navigation/core';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import { Button } from '../components/Button';
+
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
-import { Button } from '../components/Button';
-import { useNavigation } from '@react-navigation/core';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export function UserIdentification() {
    
@@ -33,8 +39,12 @@ export function UserIdentification() {
    }
    const navigation = useNavigation()
 
-    function handleSubmit(){
-        navigation.navigate('Confirmation')
+    async function handleSubmit(){
+        if(!name) // se name estiver vazio
+        return Alert.alert('Me diz como chamar você 😉');
+
+        await AsyncStorage.setItem('@smartgap:user', name);
+        navigation.navigate('Confirmation');
     }
 
     return (
@@ -43,6 +53,7 @@ export function UserIdentification() {
             style={styles.container}
             behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
             >
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
             <View style={styles.content}>
                 <View style={styles.form}>
                     <View style={styles.header}>
@@ -76,6 +87,7 @@ export function UserIdentification() {
                     </View>
                 </View>
             </View>
+            </TouchableWithoutFeedback>
             </KeyboardAvoidingView>
         </SafeAreaView>
     )
