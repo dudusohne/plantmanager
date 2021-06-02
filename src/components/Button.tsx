@@ -33,7 +33,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 16,
         height: 56,
-        //marginTop - value ~ check if 
     },
     buttonText: {
         color: colors.white,
