@@ -5,12 +5,16 @@ import {
     View,
     StyleSheet,
     FlatList,
-    ActivityIndicator
+    ActivityIndicator,
+    ScrollView
 } from 'react-native';
 import { EnviromentButton } from '../components/EnviromentButton';
 import { Header } from '../components/Header';
 import { PlantCardPrimary } from '../components/PlantCardPrimary';
 import { Load } from '../components/Load';
+import { useNavigation } from '@react-navigation/core';
+import { PlantProps } from '../libs/storage';
+import 'react-native-gesture-handler';
 
 import api from '../services/api';
 
@@ -20,18 +24,6 @@ import fonts from '../styles/fonts';
 interface EnviromentProps {
     key: string;
     title: string;
-}
-interface PlantProps {
-    id: number;
-    name: string;
-    about: string;
-    water_tips: string;
-    photo: string;
-    environments: [string];
-    frequency: {
-        times: number;
-        repeat_every: string;
-    }
 }
 
 export function PlantSelect() {
@@ -43,8 +35,9 @@ export function PlantSelect() {
     const [loading, setLoading] = useState(true);
 
     const [page, setPage] = useState(1);
-    const [loadingMore, setLoadingMore] = useState(true);
-    const [loadedAll, setLoadedAll] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const navigation = useNavigation();
 
     function handleEnviromentSelected(enviroment: string) {
         setEnviromentsSelected(enviroment);
@@ -84,7 +77,10 @@ export function PlantSelect() {
             setLoadingMore(true);
             setPage(oldValue => oldValue + 1);
             fetchPlants();
+    }
 
+    function handlePlantSelect(plant: PlantProps){
+        navigation.navigate('PlantSave', { plant });
     }
 
     useEffect(() => {
@@ -107,17 +103,17 @@ export function PlantSelect() {
         fetchPlants();
     }, [])
 
-
-    if (loading) {
+    if (loading) 
         return <Load />
-    }
+    
+    
     return (
         <View style={styles.container}>
             <View style={styles.header}>
                 <Header />
 
                 <Text style={styles.title}>
-                    em qual hambiente
+                    em qual ambiente
                 </Text>
 
                 <Text style={styles.subtitle}>
@@ -126,22 +122,25 @@ export function PlantSelect() {
             </View>
 
             <View>
-
+               <ScrollView>
                 <FlatList   
                     data={enviroments}
                     keyExtractor={(item) => String(item.key)}
-                    renderItem={({ item }) => (
-                        <EnviromentButton
-                            title={item.title}
-                            active={item.key == enviromentsSelected}
-                            onPress={() => handleEnviromentSelected(item.key)}
+                     renderItem={({ item }) => (
+                          <EnviromentButton
+                        
+                              title={item.title}
+                              active={item.key == enviromentsSelected}
+                              onPress={() => handleEnviromentSelected(item.key)}
 
-                        />
-                    )}
+                          />
+                      )}
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.enviromentlist}
+                    onEndReachedThreshold={0.5}
                 />
+                </ScrollView>
 
             </View>
             <View style={styles.plants}>
@@ -149,7 +148,10 @@ export function PlantSelect() {
                     data={filteredPlants}
                     keyExtractor={(item) => String(item.id)}
                     renderItem={({ item }) => (
-                        <PlantCardPrimary data={item} />
+                        <PlantCardPrimary 
+                        data={item}
+                        onPress={() => handlePlantSelect(item)}
+                         />
                     )}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
@@ -188,14 +190,10 @@ const styles = StyleSheet.create({
         lineHeight: 20,
         color: colors.heading,
     },
-    viewFlat: {
-        flex: 1
-    },
     enviromentlist: {
         height: 40,
         justifyContent: 'center',
         paddingBottom: 5,
-        marginLeft: 32,
         marginVertical: 32
     },
     plants: {
